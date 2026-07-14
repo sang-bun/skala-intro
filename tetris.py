@@ -369,6 +369,19 @@ def reset_game():
 
     return board, current_block, next_block, score, game_over
 
+def draw_score(screen, score, font):
+    """획득한 점수를 화면 오른쪽 상단에 표시한다."""
+
+    # 점수 문자열을 만든다.
+    score_text = font.render(f"Score: {score}", True, WHITE)
+
+    # 화면 오른쪽 상단에 배치한다.
+    score_rect = score_text.get_rect()
+    score_rect.topright = (SCREEN_WIDTH - 20, 20)
+
+    # 점수를 화면에 출력한다.
+    screen.blit(score_text, score_rect)
+
 
 def main():
     """테트리스 게임의 메인 함수"""
@@ -487,9 +500,13 @@ def main():
         if not game_over:
             draw_block(screen, current_block)
 
-        draw_information(screen, score, font, small_font)
+        # 다음 블록 미리보기
         draw_next_block(screen, next_block, small_font)
 
+        # 화면 오른쪽 상단에 점수 표시
+        draw_score(screen, score, font)
+
+        # 게임 오버 화면을 출력한다.
         if game_over:
             draw_game_over(screen, font, small_font)
 
