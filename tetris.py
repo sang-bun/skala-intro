@@ -242,15 +242,44 @@ def draw_block(screen, block):
                 )
 
 
-def draw_next_block(screen, next_block, font):
-    """다음에 나올 블록을 오른쪽 영역에 그린다."""
+def draw_next_block(screen, next_block, small_font):
+    """다음에 떨어질 블록을 화면 왼쪽 상단에 미리 표시한다."""
 
-    text = font.render("NEXT", True, WHITE)
-    screen.blit(text, (BOARD_WIDTH * BLOCK_SIZE + 60, 180))
+    # 미리보기 영역의 위치와 크기
+    preview_x = 10
+    preview_y = 10
+    preview_width = 150
+    preview_height = 130
 
-    start_x = BOARD_WIDTH * BLOCK_SIZE + 55
-    start_y = 230
+    # 미리보기 영역의 반투명 배경
+    preview_surface = pygame.Surface(
+        (preview_width, preview_height),
+        pygame.SRCALPHA
+    )
+    preview_surface.fill((0, 0, 0, 180))
 
+    screen.blit(preview_surface, (preview_x, preview_y))
+
+    # 미리보기 영역 테두리
+    pygame.draw.rect(
+        screen,
+        WHITE,
+        (preview_x, preview_y, preview_width, preview_height),
+        2
+    )
+
+    # NEXT 문구 출력
+    title = small_font.render("NEXT", True, WHITE)
+    screen.blit(title, (preview_x + 50, preview_y + 10))
+
+    # 다음 블록을 미리보기 영역 중앙에 배치한다.
+    shape_width = len(next_block.shape[0]) * BLOCK_SIZE
+    shape_height = len(next_block.shape) * BLOCK_SIZE
+
+    start_x = preview_x + (preview_width - shape_width) // 2
+    start_y = preview_y + 45 + (preview_height - 45 - shape_height) // 2
+
+    # 다음 블록을 그린다.
     for row_index, row in enumerate(next_block.shape):
         for column_index, value in enumerate(row):
 
@@ -459,7 +488,7 @@ def main():
             draw_block(screen, current_block)
 
         draw_information(screen, score, font, small_font)
-        draw_next_block(screen, next_block, font)
+        draw_next_block(screen, next_block, small_font)
 
         if game_over:
             draw_game_over(screen, font, small_font)
