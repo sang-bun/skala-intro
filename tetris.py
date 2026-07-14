@@ -1,7 +1,7 @@
 import pygame
 import random
 import sys
-
+import os
 
 # 게임 화면 설정
 BLOCK_SIZE = 30
@@ -382,11 +382,41 @@ def draw_score(screen, score, font):
     # 점수를 화면에 출력한다.
     screen.blit(score_text, score_rect)
 
+def play_background_music():
+    """직접 만든 테트리스 배경 음악을 반복 재생한다."""
+
+    try:
+        # 현재 파이썬 파일이 위치한 폴더를 기준으로 음악 경로를 만든다.
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        music_path = os.path.join(current_directory, "tetris_bgm.wav")
+
+        # 배경 음악 파일을 불러온다.
+        pygame.mixer.music.load(music_path)
+
+        # 배경 음악의 음량을 설정한다.
+        pygame.mixer.music.set_volume(0.3)
+
+        # -1은 배경 음악을 무한 반복한다는 의미이다.
+        pygame.mixer.music.play(-1)
+
+    except pygame.error as error:
+        print("배경 음악을 재생할 수 없습니다.")
+        print(error)
+
 
 def main():
     """테트리스 게임의 메인 함수"""
 
     pygame.init()
+
+    #게임이 진행되는 동안 배경 음악을 반복 재생한다.
+    play_background_music()
+
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Python Tetris")
+
+    clock = pygame.time.Clock()
+
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Python Tetris")
@@ -511,6 +541,10 @@ def main():
             draw_game_over(screen, font, small_font)
 
         pygame.display.flip()
+
+    # 배경 음악을 정지한다.
+    pygame.mixer.music.stop()
+
 
     pygame.quit()
     sys.exit()
